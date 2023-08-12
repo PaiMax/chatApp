@@ -1,7 +1,8 @@
 const user=require('../models/user');
 const bcrypt=require('bcrypt');
 const token=require('jsonwebtoken');
-require('dotenv').config({path:"C:\\Users\\nishw\\OneDrive\\Desktop\\chat .env\\.env"});
+const Message=require('../models/message');
+
 exports.addUser=async(req,res,next)=>{
     try{ 
         console.log("rreeeeeeeeeeeeeeeeeee=-"+req.body);
@@ -45,6 +46,7 @@ catch(err){console.log(err); res.status(404).json({message:"something went wrong
 
 
 function generateAccessToken(id){
+    console.log('token check---------------------'+process.env.TOKEN_COMPARE)
     return token.sign({userId:id},process.env.TOKEN_COMPARE);
 }
 
@@ -60,7 +62,7 @@ exports.checkUser=(req,res,next)=>{
                 console.log(err);
                 if(!err){
                     if(re){
-                        res.json({message:"User login Successful",token:generateAccessToken(user.id)});
+                        res.json({message:"User login Successful",token:generateAccessToken(user.id),name:user.name});
                     }
                     else{
                         res.json({message:"Password does'nt match"});
@@ -83,4 +85,24 @@ exports.checkUser=(req,res,next)=>{
     .catch((err)=>{console.log(err)});
     
 
+}
+
+exports.messageStore= async (req,res,next)=>{
+    try{
+        await Message.create({
+            message:req.body.message,
+            userId:req.user.id
+        })
+        res.json({message:'sucesss'});
+    
+
+    }
+    catch(err){
+        console.log(err);
+        res.json({message:'failure'});
+    }
+    
+    
+    
+    
 }

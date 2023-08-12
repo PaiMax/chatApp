@@ -40,21 +40,21 @@
     <div class="row justify-content-center">
         <div class="col-lg-4">
             <div class="window">
-                <div class="message">Alice: Hello!</div>
-                <div class="message">Bob: Hi there!</div>
+                <div class="message" id ="room"></div>
+                
             </div>
             <div class="chat">
-                <textarea class="form-control" name="message" placeholder="Enter your message"></textarea>
+                <textarea class="form-control" name="message" placeholder="Enter your message" id="text"></textarea>
             </div>
             <div class="button">
-                <button class="btn btn-primary">Send</button>
+                <button class="btn btn-primary" id="send">Send</button>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
-<script src="login.js"></script>
+<script src="chat.js"></script>
 
 </body>
 </html>

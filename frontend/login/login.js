@@ -11,8 +11,12 @@ function loginUser(event){
         console.log(res.data.message);
         para.innerText=res.data.message;
         if(res.data.message!="Password does'nt match"&& res.data.message!="User does'nt exist"){
+
+            localStorage.setItem('name',res.data.name);
+            localStorage.setItem('token',res.data.token);
             
-            window.location.href='';
+            
+            window.location.href='../chat.html';
 
 
         }

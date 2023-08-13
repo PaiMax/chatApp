@@ -2,6 +2,8 @@ const user=require('../models/user');
 const bcrypt=require('bcrypt');
 const token=require('jsonwebtoken');
 const Message=require('../models/message');
+const sequelize=require('sequelize');
+const { Op } = require('sequelize');
 
 exports.addUser=async(req,res,next)=>{
     try{ 
@@ -105,4 +107,55 @@ exports.messageStore= async (req,res,next)=>{
     
     
     
+}
+
+
+
+
+exports.getMessages= async (req,res,next)=>{
+    try{
+
+        console.log('mid-------------------->'+req.query.messageId);
+        let Mid;
+    if(req.query.messageId==='undefined'){
+        Mid=0;
+    }else{
+        
+        Mid =parseInt(req.query.messageId);
+
+    }
+    const Amessage=await Message.findAll({where:{id:{[Op.gt]:Mid}}})
+    console.log(Amessage);
+    res.send({message:Amessage});
+
+
+    }
+    catch(err){
+        console.log(err);
+        res.send({message:'failed'});
+    }
+    
+
+   
+
+
+
+
+}
+
+
+
+
+exports.getUser=async (req,res,next)=>{
+    try{
+        const id=req.params.id
+        const userData=await user.findOne({where:{id:id}});
+        console.log(userData);
+        res.send({data:userData});
+
+    }
+    catch(err){
+        console.log(err);
+    }
+   
 }

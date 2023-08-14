@@ -93,7 +93,8 @@ exports.messageStore= async (req,res,next)=>{
     try{
         await Message.create({
             message:req.body.message,
-            userId:req.user.id
+            userId:req.user.id,
+            groupId:req.body.group
         })
         res.json({message:'sucesss'});
     
@@ -116,6 +117,7 @@ exports.getMessages= async (req,res,next)=>{
     try{
 
         console.log('mid-------------------->'+req.query.messageId);
+        console.log('dsaasdasdsad=='+req.params.gid);
         let Mid;
     if(req.query.messageId==='undefined'){
         Mid=0;
@@ -124,7 +126,16 @@ exports.getMessages= async (req,res,next)=>{
         Mid =parseInt(req.query.messageId);
 
     }
-    const Amessage=await Message.findAll({where:{id:{[Op.gt]:Mid}}})
+    let Amessage;
+    if(req.params.gid===null){
+         Amessage=await Message.findAll({where:{id:{[Op.gt]:Mid},groupId:{[Op.is]:null}}})
+
+
+    }else{
+         Amessage=await Message.findAll({where:{id:{[Op.gt]:Mid},groupId:req.params.gid}})
+
+    }
+    
     console.log(Amessage);
     res.send({message:Amessage});
 
@@ -150,7 +161,7 @@ exports.getUser=async (req,res,next)=>{
     try{
         const id=req.params.id
         const userData=await user.findOne({where:{id:id}});
-        console.log(userData);
+        
         res.send({data:userData});
 
     }
@@ -158,4 +169,20 @@ exports.getUser=async (req,res,next)=>{
         console.log(err);
     }
    
+}
+
+exports.getUserName=async (req,res,next)=>{
+    try{
+        const users=await user.findAll(); 
+        
+        const userNames = users.map(userObj => userObj.name);
+        console.log('User Names:', userNames);
+    res.send({data:users});
+
+    }
+    catch(err){
+        console.log(err);
+    }
+    
+
 }

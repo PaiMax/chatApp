@@ -1,4 +1,5 @@
 let selectedOptions=[]; 
+const token =localStorage.getItem('token');
 document.addEventListener('DOMContentLoaded',async ()=>{
     try{
         //const curreng=localStorage.getItem('currentGroup');
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded',async ()=>{
 
 
          const usergropus=await axios.get('http://localhost:2000/usergroups/getdata',{headers:{"Authorization":token}});
-         console.log(usergropus);
+         console.log("usergroups" +usergropus);
          for(const value of usergropus.data){
             const groups=await axios.get(`http://localhost:2000/group/get/data/${value.groupId}`);
             console.log('group data'+groups.data.data);
@@ -16,6 +17,12 @@ document.addEventListener('DOMContentLoaded',async ()=>{
 
 
          }
+
+
+         await axios.get('')
+
+
+        
          
 
 
@@ -63,7 +70,7 @@ async function sendMessage(){
     try{
 
         const message=document.getElementById('text').value;
-        const token =localStorage.getItem('token');
+        
         let currentgroup=localStorage.getItem('currentGroup');
         const response=await axios.post('http://localhost:2000/user/message',{message:message,group:currentgroup},{headers:{"Authorization":token}})
         const room=document.getElementById('room');
@@ -133,6 +140,7 @@ document.getElementById('mySelect').addEventListener('change',(event)=>{
 async function showGroup(id){
     try{
     const maindiv=document.getElementById('windowdiv');
+    const membersdiv=document.getElementById('members');
     localStorage.removeItem('messages');
     localStorage.setItem('currentGroup',id);
 
@@ -200,10 +208,24 @@ else{
 
 
 
+         const memberdiv=document.getElementById('members');
+         const memberlist=document.getElementById('memberlist');
+        const users=await axios.get(`http://localhost:2000/usergroups/get/userData/${currentgroup}`);
+        console.log('this is members data=='+users.data);
+        for(const user of users.data){
+            const u=await axios.get(`http://localhost:2000/user/get/userData/${user.userId}`);
+            const child=`<li id="${u.data.data.id}">${u.data.data.name} <button onclick=deleteFromGroup("${u.data.data.id}")>delete</button><button id="${u.data.data.id}"onclick=addToadmin("${u.data.data.id}","${currentgroup}")>Make admin</button></li>`;
+            memberlist.innerHTML+=child;
+
+        }
+
+
+
 
 
 
     maindiv.style.display='block';
+    memberdiv.style.display='block';
 }
 catch(err){console.log(err);}
 
@@ -222,8 +244,11 @@ catch(err){console.log(err);}
                 console.log('submit button running');
             
                 const res=await axios.post('http://localhost:2000/group/post/data',{groupName:name,users:selectedOptions});
+                console.log('post is working'+res.data.message);
                 if(res.data.message==='sucess'){
                     showgroupbutton(res.data.groupdata);
+                    
+                    await axios.get(`http://localhost:2000/admin/post/data/${res.data.groupdata.id}`,{headers:{"Authorization":token}});
                     
                     
         
@@ -252,6 +277,77 @@ catch(err){console.log(err);}
             parent.innerHTML+=button;
 
         }
+
+const searchInput = document.getElementById('search-input');
+const searchButton = document.getElementById('search-button');
+const searchResults = document.getElementById('search-results');
+searchButton.addEventListener('click', performSearch);
+
+async function performSearch(){
+    try{ const searchTerm=searchInput.value.trim();
+        const res=await axios.get(`http://localhost:2000/user/search/${searchTerm}`);
+        const child =`<p>${res.data.name}</p><button onclick=addUserToGroup("${res.data.id}")>add</button>`;
+        searchResults.innerHTML=child;}
+        catch(err){
+            console.log(err);
+        }
+   
+
+
+
+
+}
+async function addUserToGroup(id){
+    try{  const groupId=localStorage.getItem('currentGroup');
+    await axios.post('http://localhost:2000/usergroups/add',{userId:id,groupId:groupId});
+    
+
+}
+catch(err){
+    console.log(err);
+}
+  
+}
+
+
+
+async function deleteFromGroup(id){
+    //const chatWindow=document.getElementById('room');
+    //const child=`<p>${user.name} is removed.</p>`
+    //chatWindow.innerHTML+=child;
+    console.log('in delete group');
+
+    const res=await axios.get(`http://localhost:2000/usergroups/delete/${id}`);
+    if(res.data.message==='success'){
+
+        const html=document.getElementById(id);
+        html.remove();
+
+
+    }
+
+
+
+}
+
+async function addToadmin(uid,gid){
+    const res=await axios.post(`http://localhost:2000/admin/makeadmin`,{userId:uid,groupId:gid});    
+    //if(res.data.message==='sucess'){
+        //const d=document.getElementById(currentgroup);
+        //d.remove();    
+    //}
+
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

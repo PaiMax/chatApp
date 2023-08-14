@@ -52,7 +52,7 @@
             text-align: center;
         }
         
-        button {
+        #group {
             padding: 10px 20px;
             background-color: #007bff;
             color: #fff;
@@ -61,10 +61,21 @@
             cursor: pointer;
             margin-top: 10px;
         }
+        button{
+            background-color:#afdb58;
+            border-radius: 4px;
+            cursor: pointer;
+
+        }
+
         
         button:hover {
             background-color: #0056b3;
         }
+        #members{
+            display: none;
+        }
+        
     </style>
 </head>
 <body>
@@ -91,10 +102,30 @@
     <div id="formbuttonplace">
 
     </div>>
+    <div id="members" >
+        <h3 style="font-family: sans-serif">Members in the group</h3>
+        <ul id="memberlist"></ul>
+    </div>
 
 <div class="container">
+   
+    
+    
     <div class="row justify-content-center">
+        
         <div class="col-lg-4" id="windowdiv">
+            
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search by name...">
+                <button id="search-button">Search</button>
+            </div>
+            <div id="search-results">
+                <!-- Display search results here -->
+            </div>
+          
+
+
+
             <div class="window">
                 <div class="message" id ="room"></div>
                 

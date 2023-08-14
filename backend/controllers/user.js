@@ -4,6 +4,7 @@ const token=require('jsonwebtoken');
 const Message=require('../models/message');
 const sequelize=require('sequelize');
 const { Op } = require('sequelize');
+const User = require('../models/user');
 
 exports.addUser=async(req,res,next)=>{
     try{ 
@@ -127,7 +128,7 @@ exports.getMessages= async (req,res,next)=>{
 
     }
     let Amessage;
-    if(req.params.gid===null){
+    if(req.params.gid===0){
          Amessage=await Message.findAll({where:{id:{[Op.gt]:Mid},groupId:{[Op.is]:null}}})
 
 
@@ -186,3 +187,10 @@ exports.getUserName=async (req,res,next)=>{
     
 
 }
+ exports.searchUser= async (req,res,next)=>{
+    console.log("in search");
+    const Searchname=req.params.name;
+    const user=await User.findOne({where:{name:Searchname}});
+    res.send(user);
+
+ }
